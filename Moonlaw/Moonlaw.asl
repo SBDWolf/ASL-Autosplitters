@@ -32,8 +32,8 @@ start
 
 split
 {
-    // if scene changed, is in the settings, and has not yet been split for
-    return old.scene != current.scene && settings["0x" + current.scene.ToString("X")] && vars.completedSplits.Add(current.Scene);
+    // if scene changed, is activated in the settings, and has not yet been split for
+    return old.scene != current.scene && settings["0x" + current.scene.ToString("X2")] && vars.completedSplits.Add(current.Scene);
 }
 
 reset
