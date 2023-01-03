@@ -4,68 +4,40 @@
 
 state("Moonlaw")
 {
-    byte hasControl  : "Moonlaw.exe", 0x007D2614, 0x50, 0x1A0, 0x20; // 0 if player has no control, 1 if player has control
-    byte currentScene  : "Moonlaw.exe", 0x007D2614, 0x50, 0x2B0; // is 0x05 at starting room
+    bool hasControl : 0x7D2614, 0x50, 0x1A0, 0x20; // true if player has control, false otherwise
+    byte scene      : 0x7D2614, 0x50, 0x2B0; // is 0x05 at starting room
 }
 
 startup
 {
-    settings.Add("groundshredder", true, "Groundshredder");
-    settings.Add("eye_spawn", true, "Eye Spawn");
-    settings.Add("rodney", true, "Rodney");
-    settings.Add("plasma_torizo", true, "Plasma Torizo");
-    settings.Add("ending", true, "Ending");
+    settings.Add("0x16", true, "Groundshredder"); // if player is coming out of the groundshredder room
+    settings.Add("0x22", true, "Eye Spawn");      // if player is coming out of the eye spawn room
+    settings.Add("0x3F", true, "Rodney");         // if player is coming out of the rodney room
+    settings.Add("0x4D", true, "Plasma Torizo");  // if player is coming out of the plasma torizo room
+    settings.Add("0x69", true, "Ending");         // if game is finally over
+    
+    vars.completedSplits = new HashSet<int>();
 }
 
-split
+onStart
 {
-    if(settings["groundshredder"] && !vars.completedSplits["groundshredder"] && current.currentScene == 0x16 && old.currentScene == 0x15) // if player is coming out of the groundshredder room
-    {
-        vars.completedSplits["groundshredder"] = true;
-        return true;
-    }
-    if(settings["eye_spawn"] && !vars.completedSplits["eye_spawn"] && current.currentScene == 0x22 && old.currentScene == 0x21) // if player is coming out of the eye spawn room
-    {   
-        vars.completedSplits["eye_spawn"] = true;
-        return true;
-    }
-    if(settings["rodney"] && !vars.completedSplits["rodney"] && current.currentScene == 0x3F && old.currentScene == 0x3D) // if player is coming out of the rodney room
-    {
-        vars.completedSplits["rodney"] = true;
-        return true;
-    }
-    if(settings["plasma_torizo"] && !vars.completedSplits["plasma_torizo"] && current.currentScene == 0x4D && old.currentScene == 0x4C) // if player is coming out of the plasma torizo room
-    {
-        vars.completedSplits["plasma_torizo"] = true;
-        return true;
-    }
-    if(settings["ending"] && !vars.completedSplits["ending"] && current.currentScene == 0x69) // if game is finally over
-    {
-        vars.completedSplits["ending"] = true;
-        return true;
-    }
-    return false;
+    vars.completedSplits.Clear();
 }
 
 start
 {
-    if(current.currentScene == 0x05 && current.hasControl == 0x01 && old.hasControl == 0x00) // if in first room of the game and player has just gained control on that frame
-    {
-        // this dictionary contains the splits that have already been completed, so that if you die and go through the same segment it won't split twice
-        vars.completedSplits = new Dictionary<string, bool>();
-        vars.completedSplits.Add("groundshredder", false);
-        vars.completedSplits.Add("eye_spawn", false);
-        vars.completedSplits.Add("rodney", false);
-        vars.completedSplits.Add("plasma_torizo", false);
-        vars.completedSplits.Add("ending", false);
-        return true;
-    }
-    return false;
+    // if in first room of the game and player has just gained control on that frame
+    return !old.hasControl && current.hasControl && current.scene == 0x05;
+}
+
+split
+{
+    // if scene changed, is activated in the settings, and has not yet been split for
+    return old.scene != current.scene && settings["0x" + current.scene.ToString("X2")] && vars.completedSplits.Add(current.scene);
 }
 
 reset
 {
-    if(current.currentScene == 0x65) // if on title screen
-        return true;
-    return false;
+    // if on title screen
+    return old.scene != 0x65 && current.scene == 0x65;
 }
