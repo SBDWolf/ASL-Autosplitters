@@ -16,7 +16,7 @@ startup
     settings.Add("0x4D", true, "Plasma Torizo");  // if player is coming out of the plasma torizo room
     settings.Add("0x69", true, "Ending");         // if game is finally over
     
-    vars.completedSplits = new HashSet<string>();
+    vars.completedSplits = new HashSet<int>();
 }
 
 onStart
