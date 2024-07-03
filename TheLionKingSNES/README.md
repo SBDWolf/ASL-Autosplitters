@@ -1,5 +1,5 @@
 # The Lion King (SNES) Autosplitter
-This script can be used with Livesplit to automatically start, split and reset for The Lion King (SNES).
+This script can be used with [LiveSplit](http://livesplit.github.io) to automatically start, split and reset for The Lion King (SNES).
 
 ## Supported emulators:
 - higan v110
