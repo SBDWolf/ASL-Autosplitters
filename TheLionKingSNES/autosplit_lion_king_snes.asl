@@ -1,4 +1,4 @@
-// Code by Kannadan and SBDWolf
+// Code by SBDWolf and Kannadan
 //
 // Some code taken from the Super Metroid autosplitter: https://github.com/UNHchabo/AutoSplitters/blob/master/SuperMetroid/LiveSplit.SuperMetroid.asl
 
