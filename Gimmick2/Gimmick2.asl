@@ -42,6 +42,8 @@ init
     vars.SaveLevelData = new MemoryWatcher<long>(new DeepPointer(GWorld, 0x1D8, 0x250, 0x30));
     vars.SaveLevelSize = new MemoryWatcher<byte>(new DeepPointer(GWorld, 0x1D8, 0x250, 0x38));
     vars.WorldFName = new MemoryWatcher<ulong>(new DeepPointer(GWorld, 0x18));
+    // i believe this property is actually {this byte} & 2 
+    vars.bTriggerPostLoadMap = new MemoryWatcher<byte>(new DeepPointer(GWorld, 0x13B));
 
     var FNamePoolPtr = IntPtr.Zero;
 
@@ -139,6 +141,7 @@ update {
     vars.SaveLevelData.Update(game);
     vars.SaveLevelSize.Update(game);
     vars.WorldFName.Update(game);
+    vars.bTriggerPostLoadMap.Update(game);
 
     vars.currentWorldName = vars.FNameToString(vars.WorldFName.Current);
 }
@@ -168,5 +171,5 @@ split
 
 isLoading
 {
-    return vars.GWorld.Current == 0;
+    return ((vars.bTriggerPostLoadMap.Current & 2) == 0);
 }
