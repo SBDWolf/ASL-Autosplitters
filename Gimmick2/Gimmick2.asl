@@ -1,5 +1,5 @@
 // author: SBDWolf
-// v1.4
+// v1.5
 
 
 state("Doohickey-Win64-Shipping")
@@ -9,11 +9,80 @@ state("Doohickey-Win64-Shipping")
 startup
 {
     settings.Add("MAP_Tutorial_Persistent", true, "Midsummer Meadow");
+    settings.Add("Tutorial_Warp1", false, "Midsummer Meadow Warp 1", "MAP_Tutorial_Persistent");
+    settings.Add("Tutorial_Warp2", false, "Midsummer Meadow Warp 2", "MAP_Tutorial_Persistent");
+    settings.Add("Tutorial_Warp3", false, "Midsummer Meadow Warp 3", "MAP_Tutorial_Persistent");
+    settings.Add("Tutorial_Warp4", false, "Midsummer Meadow Warp 4", "MAP_Tutorial_Persistent");
+
     settings.Add("MAP_Temple_Persistent", true, "Tadpole Temple");
+    settings.Add("Temple_Warp1", false, "Tadpole Temple Warp 1", "MAP_Temple_Persistent");
+    settings.Add("Temple_Warp2", false, "Tadpole Temple Warp 2", "MAP_Temple_Persistent");
+    settings.Add("Temple_Warp3", false, "Tadpole Temple Warp 3", "MAP_Temple_Persistent");
+    settings.Add("Temple_Warp4", false, "Tadpole Temple Warp 4", "MAP_Temple_Persistent");
+
     settings.Add("MAP_Mountain_Persistent", true, "Arctic Ascent");
+    settings.Add("Mountain_Warp1", false, "Arctic Ascent Warp 1", "MAP_Mountain_Persistent");
+    settings.Add("Mountain_Warp2", false, "Arctic Ascent Warp 2", "MAP_Mountain_Persistent");
+    settings.Add("Mountain_Warp3", false, "Arctic Ascent Warp 3", "MAP_Mountain_Persistent");
+    settings.Add("Mountain_Warp4", false, "Arctic Ascent Warp 4", "MAP_Mountain_Persistent");
+
     settings.Add("MAP_Lakeside_Persistent", true, "Fishy Factory");
+    settings.Add("Lakeside_Warp1", false, "Fishy Factory Warp 1", "MAP_Lakeside_Persistent");
+    settings.Add("Lakeside_Warp2", false, "Fishy Factory Warp 2", "MAP_Lakeside_Persistent");
+    settings.Add("Lakeside_Warp3", false, "Fishy Factory Warp 3", "MAP_Lakeside_Persistent");
+    settings.Add("Lakeside_Warp4", false, "Fishy Factory Warp 4", "MAP_Lakeside_Persistent");
+
     settings.Add("MAP_Castle_Persistent", true, "Cloud Castle");
+    settings.Add("Castle_Warp1", false, "Cloud Castle Warp 1", "MAP_Castle_Persistent");
+    settings.Add("Castle_Warp2", false, "Cloud Castle Warp 2", "MAP_Castle_Persistent");
+    settings.Add("Castle_Warp3", false, "Cloud Castle Warp 3", "MAP_Castle_Persistent");
+    settings.Add("Castle_Warp4", false, "Cloud Castle Warp 4", "MAP_Castle_Persistent");
+
     settings.Add("MAP_Manto_Persistent", true, "Sorcerer's Sanctuary");
+    settings.Add("Manto_Checkpoint1", false, "Sorcerer's Sanctuary Post-Manto1 Checkpoint", "MAP_Manto_Persistent");
+    settings.Add("Manto_Checkpoint2", false, "Sorcerer's Sanctuary Post-Manto2 Checkpoint", "MAP_Manto_Persistent");
+    settings.Add("Manto_Checkpoint3", false, "Sorcerer's Sanctuary Post-Manto3 Checkpoint", "MAP_Manto_Persistent");
+
+    vars.checkpointNames = new Dictionary<string, string>() {
+        {"0PersistentLevel.BP_Checkpoint_Respawn_C_6", "Tutorial_Warp1"},
+        {"0PersistentLevel.BP_Checkpoint_Respawn_C_9", "Tutorial_Warp2"},
+        {"0PersistentLevel.BP_Checkpoint_Respawn_C_5", "Tutorial_Warp3"},
+        {"0PersistentLevel.BP_Checkpoint_Respawn_C_14", "Tutorial_Warp4"},
+
+        {"1PersistentLevel.BP_Checkpoint_Respawn_C_0", "Temple_Warp1"},
+        {"1PersistentLevel.BP_Checkpoint_Respawn_C_4", "Temple_Warp2"},
+        {"1PersistentLevel.BP_Checkpoint_Respawn_C_17", "Temple_Warp3"},
+        {"1PersistentLevel.BP_Checkpoint_Respawn_C_12", "Temple_Warp4"},
+
+        {"2PersistentLevel.BP_Checkpoint_Respawn_C_1", "Mountain_Warp1"},
+        {"2PersistentLevel.BP_Checkpoint_Respawn_C_5", "Mountain_Warp2"},
+        {"2PersistentLevel.BP_Checkpoint_Respawn_C_21", "Mountain_Warp3"},
+        {"2PersistentLevel.BP_Checkpoint_Respawn_C_15", "Mountain_Warp4"},
+
+        {"3PersistentLevel.BP_Checkpoint_Respawn_C_1", "Lakeside_Warp1"},
+        {"3PersistentLevel.BP_Checkpoint_Respawn_C_6", "Lakeside_Warp2"},
+        {"3PersistentLevel.BP_Checkpoint_Respawn_C_21", "Lakeside_Warp3"},
+        {"3PersistentLevel.BP_Checkpoint_Respawn_C_16", "Lakeside_Warp4"},
+
+        {"4PersistentLevel.BP_Checkpoint_Respawn_C_7", "Castle_Warp1"},
+        {"4PersistentLevel.BP_Checkpoint_Respawn_C_11", "Castle_Warp2"},
+        {"4PersistentLevel.BP_Checkpoint_Respawn_C_15", "Castle_Warp3"},
+        {"4PersistentLevel.BP_Checkpoint_Respawn_C_21", "Castle_Warp4"},
+
+        {"5PersistentLevel.BP_Checkpoint_Respawn_C_0", "Manto_Checkpoint1"},
+        {"5PersistentLevel.BP_Checkpoint_Respawn_C_6", "Manto_Checkpoint2"},
+        {"5PersistentLevel.BP_Checkpoint_Respawn_C_8", "Manto_Checkpoint3"}
+    };
+
+    vars.levelIndexes = new Dictionary<string, int>() {
+        {"MAP_Tutorial_Persistent", 0},        
+        {"MAP_Temple_Persistent", 1},        
+        {"MAP_Mountain_Persistent", 2},
+        {"MAP_Lakeside_Persistent", 3},
+        {"MAP_Castle_Persistent", 4},
+        {"MAP_Manto_Persistent", 5}
+    };
+
 
     vars.completedSplits = new HashSet<string>();
 
@@ -144,6 +213,11 @@ update {
     vars.bTriggerPostLoadMap.Update(game);
 
     vars.currentWorldName = vars.FNameToString(vars.WorldFName.Current);
+
+    //IntPtr levelEntryPtr = (IntPtr)(vars.SaveLevelData.Current + vars.levelIndexes[vars.currentWorldName] * 0x88);
+    //IntPtr checkpointNameStringPtr = memory.ReadValue<IntPtr>(levelEntryPtr + 0x40);
+    //string checkpointName = vars.ReadNullTerminatedString(checkpointNameStringPtr);
+    //print(checkpointName);
 }
 
 split
@@ -167,6 +241,23 @@ split
             return true;
         }
     }
+
+    // if we hit a checkpoint that we need to split for and we haven't split for it yet
+    int levelIndex = 0;
+    if (vars.levelIndexes.TryGetValue(vars.currentWorldName, out levelIndex)) {
+        IntPtr levelEntryPtr = (IntPtr)(vars.SaveLevelData.Current + vars.levelIndexes[vars.currentWorldName] * 0x88);
+        IntPtr checkpointNameStringPtr = memory.ReadValue<IntPtr>(levelEntryPtr + 0x40);
+        string checkpointName = vars.ReadNullTerminatedString(checkpointNameStringPtr);
+        if (checkpointName != null) {
+            string settingName = "";
+            if (vars.checkpointNames.TryGetValue(levelIndex.ToString() + checkpointName, out settingName)) {
+                if (settings[settingName] && vars.completedSplits.Add(settingName)) {
+                    return true;
+                }
+            }
+        }
+    }
+
 }
 
 isLoading
