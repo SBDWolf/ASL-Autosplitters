@@ -416,6 +416,7 @@ startup
     settings.Add(vars.DUNGEON_DUSK_FOREST.ToString(), true, "Dusk Forest");
     settings.Add(vars.DUNGEON_DEEP_DUSK_FOREST.ToString(), true, "Deek Dusk Forest");
     settings.Add(vars.DUNGEON_TREESHROUD_FOREST.ToString(), true, "Treeshroud Forest");
+    settings.Add(vars.DUNGEON_WATERFALL_CAVE.ToString() + "_2", true, "Waterfall Cave 2");
     settings.Add(vars.DUNGEON_BRINE_CAVE.ToString(), true, "Brine Cave");
     settings.Add(vars.DUNGEON_LOWER_BRINE_CAVE.ToString(), true, "Lower Brine Cave");
     settings.Add(vars.DUNGEON_BRINE_CAVE_PIT.ToString(), true, "Kabutops & Omastars");
@@ -607,7 +608,17 @@ split
     // dungeon splitting
     if (vars.dungeon_ptr.Current != 0x00000000) {
         byte current_dungeon_id = vars.current_dungeon_id;
-        if (settings[current_dungeon_id.ToString()] && vars.current_floor >= vars.floorCounts[current_dungeon_id] && vars.is_clearing_floor && hasFullyFadedOut && vars.completedSplits.Add(current_dungeon_id.ToString())) {
+        string current_dungeon_split = "";
+
+        if (vars.SCENARIO_MAIN_FLAG_MAIN.Current == 22 && current_dungeon_id == vars.DUNGEON_WATERFALL_CAVE) {
+            current_dungeon_split = current_dungeon_id.ToString() + "_2";
+        }
+        else {
+            current_dungeon_split = current_dungeon_id.ToString();
+        }
+
+
+        if (settings[current_dungeon_split] && vars.current_floor >= vars.floorCounts[current_dungeon_id] && vars.is_clearing_floor && hasFullyFadedOut && vars.completedSplits.Add(current_dungeon_split)) {
             return true;
         }
     }
@@ -774,6 +785,9 @@ start
 
 onStart
 {
+    vars.second_to_display = vars.PLAY_TIME_SECONDS.Current;
+    vars.frames_to_display = vars.PLAY_TIME_FRAME_COUNTER.Current;
+    timer.IsGameTimePaused = true;
     vars.completedSplits.Clear();
 }
 
