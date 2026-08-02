@@ -372,6 +372,7 @@ startup
         { vars.DUNGEON_SKY_PEAK_SUMMIT, 1},
     };
 
+    settings.Add("pquiz", false, "Personality Quiz");
     settings.Add(vars.DUNGEON_BEACH_CAVE.ToString(), true, "Beach Cave");
     settings.Add(vars.DUNGEON_BEACH_CAVE_PIT.ToString(), true, "Koffing & Zubat");
     settings.Add(vars.DUNGEON_DRENCHED_BLUFF.ToString(), true, "Drenched Bluff");
@@ -405,7 +406,6 @@ startup
     settings.Add(vars.DUNGEON_UNDERGROUND_LAKE.ToString(), true, "Mesprit");
     settings.Add(vars.DUNGEON_CRYSTAL_CAVE.ToString(), true, "Crystal Cave");
     settings.Add(vars.DUNGEON_CRYSTAL_CROSSING.ToString(), true, "Crystal Crossing");
-    settings.Add(vars.DUNGEON_CRYSTAL_LAKE.ToString(), true, "Grovyle");
     settings.Add("jd09", true, "Jobs Day 9 (0 Missions)");
     settings.Add("jd10", true, "Jobs Day 10 (0 Missions)");
     settings.Add(vars.DUNGEON_CHASM_CAVE.ToString(), true, "Chasm Cave");
@@ -426,8 +426,8 @@ startup
     settings.Add(vars.DUNGEON_TEMPORAL_TOWER.ToString(), true, "Temporal Tower");
     settings.Add(vars.DUNGEON_TEMPORAL_SPIRE.ToString(), true, "Temporal Spire");
     settings.Add(vars.DUNGEON_TEMPORAL_PINNACLE.ToString(), true, "Primal Dialga");
-    settings.Add("vet", false, "Vanilla English End Timing");
-    settings.Add("set", true, "Speedrun Mod End Timing");
+    settings.Add("vet", false, "Any% Vanilla English End Timing");
+    settings.Add("set", true, "Any% Speedrun Mod End Timing");
     settings.Add(vars.DUNGEON_MYSTIFYING_FOREST.ToString(), true, "Mistifying Forest");
     settings.Add(vars.DUNGEON_MYSTIFYING_FOREST_CLEARING.ToString(), true, "Guild");
     settings.Add("jd11", true, "Jobs Day 11 (0 Missions)");
@@ -437,7 +437,6 @@ startup
     settings.Add(vars.DUNGEON_3RD_STATION_PASS.ToString(), true, "Sky Peak 3rd Station Pass");
     settings.Add(vars.DUNGEON_4TH_STATION_PASS.ToString(), true, "Sky Peak 4th Station Pass");
     settings.Add(vars.DUNGEON_5TH_STATION_PASS.ToString(), true, "Sky Peak 5th Station Pass");
-    settings.Add(vars.DUNGEON_5TH_STATION_CLEARING.ToString(), true, "Carnivines");
     settings.Add(vars.DUNGEON_6TH_STATION_PASS.ToString(), true, "Sky Peak 6th Station Pass");
     settings.Add(vars.DUNGEON_7TH_STATION_PASS.ToString(), true, "Sky Peak 7th Station Pass");
     settings.Add(vars.DUNGEON_8TH_STATION_PASS.ToString(), true, "Sky Peak 8th Station Pass");
@@ -472,6 +471,7 @@ startup
     settings.Add(vars.DUNGEON_DARK_CRATER.ToString(), true, "Dark Crater");
     settings.Add(vars.DUNGEON_DEEP_DARK_CRATER.ToString(), true, "Deep Dark Crater");
     settings.Add(vars.DUNGEON_DARK_CRATER_PIT.ToString(), true, "Darkrai & Co.");
+    settings.Add("dset", true, "Beat Darkrai Speedrun Mod End Timing");
 
     vars.completedSplits = new HashSet<string>();
 
@@ -623,16 +623,30 @@ split
         }
     }
 
-    // vanilla end timing
+    // personality quiz, 0x313031304131304D = M01A0101, 0x383032304131304D = M01A0208
+    if ((vars.current_script_id.Current == 0x313031304131304D || vars.current_script_id.Current == 0x383032304131304D) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 2) {
+        if (settings["pquiz"] && vars.completedSplits.Add("pquiz")) {
+            return true;
+        }
+    }
+
+    // any% vanilla end timing
     if (vars.current_script_id.Current == 0x353136304136324D) { // M26A0615
         if (settings["vet"] && hasFullyFadedOut && vars.completedSplits.Add("vet")) {
             return true;
         }
     }
 
-    // speedrun mod end timing
+    // any% speedrun mod end timing
     if (vars.current_script_id.Current == 0x363038304136324D) { // M26A0806
         if (settings["set"] && vars.completedSplits.Add("set")) {
+            return true;
+        }
+    }
+
+    // beat darkrai speedrun mod end timing. no current script id for this one because i was a fool and i placed the save in unionall :)
+    if (vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 92) { // M26A0806
+        if (settings["dset"] && vars.completedSplits.Add("dset")) {
             return true;
         }
     }
