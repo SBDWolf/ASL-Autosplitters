@@ -34,6 +34,7 @@ startup
     // part of the dungeon struct. the struct needs to be dereferenced and read during gameplay, and only then can these variables be updated.
     vars.current_dungeon_id = 0;
     vars.current_floor = 0;
+    vars.current_floor_old = 0;
     vars.is_clearing_floor = false;
 
     // credits to: https://github.com/UsernameFodder/pmdsky-debug/blob/master/headers/types/common/enums.h#L2999
@@ -414,7 +415,7 @@ startup
     settings.Add(vars.DUNGEON_DEEP_SEALED_RUIN.ToString(), true, "Deep Sealed Ruin");
     settings.Add(vars.DUNGEON_SEALED_RUIN_PIT.ToString(), true, "Spiritomb");
     settings.Add(vars.DUNGEON_DUSK_FOREST.ToString(), true, "Dusk Forest");
-    settings.Add(vars.DUNGEON_DEEP_DUSK_FOREST.ToString(), true, "Deek Dusk Forest");
+    settings.Add(vars.DUNGEON_DEEP_DUSK_FOREST.ToString(), true, "Deep Dusk Forest");
     settings.Add(vars.DUNGEON_TREESHROUD_FOREST.ToString(), true, "Treeshroud Forest");
     settings.Add(vars.DUNGEON_WATERFALL_CAVE.ToString() + "_2", true, "Waterfall Cave 2");
     settings.Add(vars.DUNGEON_BRINE_CAVE.ToString(), true, "Brine Cave");
@@ -428,7 +429,7 @@ startup
     settings.Add(vars.DUNGEON_TEMPORAL_PINNACLE.ToString(), true, "Primal Dialga");
     settings.Add("vet", false, "Any% Vanilla English End Timing");
     settings.Add("set", true, "Any% Speedrun Mod End Timing");
-    settings.Add(vars.DUNGEON_MYSTIFYING_FOREST.ToString(), true, "Mistifying Forest");
+    settings.Add(vars.DUNGEON_MYSTIFYING_FOREST.ToString(), true, "Mystifying Forest");
     settings.Add(vars.DUNGEON_MYSTIFYING_FOREST_CLEARING.ToString(), true, "Guild");
     settings.Add("jd11", true, "Jobs Day 11 (0 Missions)");
     settings.Add("jd12", true, "Jobs Day 12 (1 Mission)");
@@ -617,8 +618,7 @@ split
             current_dungeon_split = current_dungeon_id.ToString();
         }
 
-
-        if (settings[current_dungeon_split] && vars.current_floor >= vars.floorCounts[current_dungeon_id] && vars.is_clearing_floor && hasFullyFadedOut && vars.completedSplits.Add(current_dungeon_split)) {
+        if (settings[current_dungeon_split] && vars.current_floor >= vars.floorCounts[current_dungeon_id] && vars.is_clearing_floor && hasFullyFadedOut && vars.current_floor_old == vars.current_floor && vars.completedSplits.Add(current_dungeon_split)) {
             return true;
         }
     }
@@ -835,6 +835,7 @@ update
         IntPtr is_clearing_floor_addr = IntPtr.Add(vars.RAMAddress, relative_dungeon_ptr + 0x6);
         vars.is_clearing_floor = game.ReadValue<bool>(is_clearing_floor_addr);
         vars.current_dungeon_id = game.ReadValue<byte>(current_dungeon_id_addr);
+        vars.current_floor_old = vars.current_floor;
         vars.current_floor = game.ReadValue<byte>(current_floor_addr);
     }
 
