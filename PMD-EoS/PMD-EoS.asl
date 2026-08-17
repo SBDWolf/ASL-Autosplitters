@@ -426,7 +426,7 @@ startup
     settings.Add(vars.DUNGEON_OLD_RUINS.ToString(), true, "Dusknoir & Sableyes");
     settings.Add(vars.DUNGEON_TEMPORAL_TOWER.ToString(), true, "Temporal Tower");
     settings.Add(vars.DUNGEON_TEMPORAL_SPIRE.ToString(), true, "Temporal Spire");
-    settings.Add(vars.DUNGEON_TEMPORAL_PINNACLE.ToString(), true, "Primal Dialga");
+    settings.Add(vars.DUNGEON_TEMPORAL_PINNACLE.ToString(), false, "Primal Dialga");
     settings.Add("vet", false, "Any% Vanilla English End Timing");
     settings.Add("set", true, "Any% Speedrun Mod End Timing");
     settings.Add(vars.DUNGEON_MYSTIFYING_FOREST.ToString(), true, "Mystifying Forest");
