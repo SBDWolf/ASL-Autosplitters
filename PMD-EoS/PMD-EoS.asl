@@ -1,5 +1,5 @@
 // Author: SBDWolf
-// v1.0
+// v1.1
 
 state("DeSmuME_0.9.11_x64")
 {
@@ -14,8 +14,15 @@ state("MelonDS")
 {
 }
 
+state("PMD_EoS_Uplink_Reader")
+{
+}
+
 startup
 {
+    vars.UplinkFrameLen = 70; // must match UplinkProtocol.FrameLen
+    vars.isHardwareUplink = false;
+
     vars.millisecond_lookup = new int[] {
       0,  17,  33,  50,  67,  83,
     100, 117, 133, 150, 167, 183,
@@ -527,6 +534,86 @@ startup
 
         vars.currentVersion = vars.versionDetection.Current;
     });
+
+    vars.readUplinkVariables = (Action)(() => {
+        Func<dynamic> makeField = () => {
+            dynamic field = new System.Dynamic.ExpandoObject();
+            field.Current = 0;
+            field.Old = 0;
+            return field;
+        };
+
+        vars.PLAY_TIME_SECONDS = makeField();
+        vars.PLAY_TIME_FRAME_COUNTER = makeField();
+        vars.SCENARIO_MAIN_FLAG_MAIN = makeField();
+        vars.SCENARIO_MAIN_FLAG_SUB = makeField();
+        vars.REQUEST_CLEAR_COUNT = makeField();
+        vars.brightness = makeField();
+        vars.magic_number = makeField();
+        vars.overlay1_start = makeField();
+        vars.dungeon_ptr = makeField();
+        vars.current_script_id = makeField();
+    });
+
+    vars.updateUplinkVariables = (Action)(() => {
+        byte[] frame = new byte[vars.UplinkFrameLen];
+        byte[] result = null;
+
+        for (int attempt = 0; attempt < 5; attempt++) {
+            uint seq1 = vars.UplinkAccessor.ReadUInt32(vars.UplinkFrameLen);
+            if ((seq1 & 1) != 0) continue;
+            vars.UplinkAccessor.ReadArray(0, frame, 0, vars.UplinkFrameLen);
+            uint seq2 = vars.UplinkAccessor.ReadUInt32(vars.UplinkFrameLen);
+            if (seq1 == seq2) { result = frame; break; }
+        }
+
+        vars.uplinkLastFrame = result;
+
+        if (result != null) {
+            Action<dynamic, object> shift = (field, newValue) => {
+                field.Old = field.Current;
+                field.Current = newValue;
+            };
+
+            shift(vars.PLAY_TIME_SECONDS,       BitConverter.ToInt32(result, 0x0A));
+            shift(vars.PLAY_TIME_FRAME_COUNTER, result[0x0E]);
+            shift(vars.SCENARIO_MAIN_FLAG_MAIN, result[0x12]);
+            shift(vars.SCENARIO_MAIN_FLAG_SUB,  result[0x16]);
+            shift(vars.REQUEST_CLEAR_COUNT,     result[0x1A]);
+            shift(vars.brightness,              BitConverter.ToInt16(result, 0x1E));
+            shift(vars.magic_number,            BitConverter.ToInt32(result, 0x22));
+            shift(vars.overlay1_start,          BitConverter.ToInt16(result, 0x26));
+            shift(vars.dungeon_ptr,             BitConverter.ToInt32(result, 0x2A));
+            shift(vars.current_script_id,       BitConverter.ToInt64(result, 0x2E));
+        }
+    });
+
+    // vars.fixScriptIdBytes = (Func<uint, uint, long>)((part1, part2) => {
+    //     byte[] bytes = new byte[8];
+    //     Array.Copy(BitConverter.GetBytes(part1), 0, bytes, 0, 4);
+    //     Array.Copy(BitConverter.GetBytes(part2), 0, bytes, 4, 4);
+
+    //     // Trim at the first null terminator (if any)
+    //     int len = Array.IndexOf(bytes, (byte)0);
+    //     if (len < 0) len = bytes.Length;
+
+    //     return (long)bytes;
+    // });
+
+
+    //vars.readUplinkVariables = (Action)(() => {
+        //vars.PLAY_TIME_SECONDS = new MemoryWatcher<int>(new DeepPointer(IntPtr.Add(vars.MagicMarkerAddr, 0x12)));
+        //vars.PLAY_TIME_FRAME_COUNTER = new MemoryWatcher<byte>(new DeepPointer(IntPtr.Add(vars.MagicMarkerAddr, 0x16)));
+        //vars.SCENARIO_MAIN_FLAG_MAIN = new MemoryWatcher<byte>(new DeepPointer(IntPtr.Add(vars.MagicMarkerAddr, 0x1A)));
+        //vars.SCENARIO_MAIN_FLAG_SUB = new MemoryWatcher<byte>(new DeepPointer(IntPtr.Add(vars.MagicMarkerAddr, 0x1E)));
+        //vars.REQUEST_CLEAR_COUNT = new MemoryWatcher<byte>(new DeepPointer(IntPtr.Add(vars.MagicMarkerAddr, 0x22)));
+        //vars.brightness = new MemoryWatcher<short>(new DeepPointer(IntPtr.Add(vars.MagicMarkerAddr, 0x26)));
+        //vars.magic_number = new MemoryWatcher<int>(new DeepPointer(IntPtr.Add(vars.MagicMarkerAddr, 0x2A)));
+        //vars.overlay1_start = new MemoryWatcher<short>(new DeepPointer(IntPtr.Add(vars.MagicMarkerAddr, 0x2E)));
+        //vars.dungeon_ptr = new MemoryWatcher<int>(new DeepPointer(IntPtr.Add(vars.MagicMarkerAddr, 0x32)));
+        //vars.current_script_id = new MemoryWatcher<long>(new DeepPointer(IntPtr.Add(vars.MagicMarkerAddr, 0x36)));
+    //});
+
 }
 
 init
@@ -539,67 +626,86 @@ init
 
     string normalizedProcessName = memory.ProcessName.ToLower();
 
-    if (normalizedProcessName.Contains("melonds")) {
-        
-        int[] offsets = null;
+    // for console: this is just the memory values directly, so we don't need to follow a path from the RAMAddress
+    if (normalizedProcessName.Contains("pmd_eos_uplink_reader")) {
+        print("Found the Uplink Reader. Assuming Speedrun Mod");
 
-        if (exe.ModuleMemorySize == 0xA9A4000) {
-            print("Detected MelonDS v1.1, applying pointer path...");
-                offsets = new int[] {
-                    0x2031DE0,
-                    0xA0,
-                    0x405438,
-                    0x0
-                };
-        }
-        else if (exe.ModuleMemorySize == 0xA5E8000) {
-            print("Detected MelonDS v1.0 RC, applying pointer path...");
-                offsets = new int[] {
-                    0x257F080,
-                    0xA0,
-                    0x405408,
-                    0x0
-                };
-        }
-        else {
-            print("Detected MelonDS, but version is unknown.");
-            // throwing an exception lets it retry the frame after
-            throw new Exception("[PMD EoS Autosplitter] Detected MelonDS, but version is unknown.");
-        }
-        
-        if (offsets != null) {
-            IntPtr ptr = IntPtr.Add(exe.BaseAddress, offsets[0]);
+        var mmf = System.IO.MemoryMappedFiles.MemoryMappedFile.OpenExisting("PMUplinkFrame");
+        vars.UplinkAccessor = mmf.CreateViewAccessor(
+            0, vars.UplinkFrameLen + 4, System.IO.MemoryMappedFiles.MemoryMappedFileAccess.Read);
+        vars.UplinkMmf = mmf; // keep the handle alive for the process's lifetime
 
-            for (int i = 1; i < offsets.Length; i++)
-            {
-                ptr = IntPtr.Add(game.ReadPointer(ptr), offsets[i]);
+        vars.readUplinkVariables();
+        vars.isHardwareUplink = true;
+    }
+    else {
+
+        if (normalizedProcessName.Contains("melonds")) {
+            
+            int[] offsets = null;
+
+            if (exe.ModuleMemorySize == 0xA9A4000) {
+                print("Detected MelonDS v1.1, applying pointer path...");
+                    offsets = new int[] {
+                        0x2031DE0,
+                        0xA0,
+                        0x405438,
+                        0x0
+                    };
             }
+            else if (exe.ModuleMemorySize == 0xA5E8000) {
+                print("Detected MelonDS v1.0 RC, applying pointer path...");
+                    offsets = new int[] {
+                        0x257F080,
+                        0xA0,
+                        0x405408,
+                        0x0
+                    };
+            }
+            else {
+                print("Detected MelonDS, but version is unknown.");
+                // throwing an exception lets it retry the frame after
+                throw new Exception("[PMD EoS Autosplitter] Detected MelonDS, but version is unknown.");
+            }
+            
+            if (offsets != null) {
+                IntPtr ptr = IntPtr.Add(exe.BaseAddress, offsets[0]);
 
-            vars.RAMAddress = ptr;
+                for (int i = 1; i < offsets.Length; i++)
+                {
+                    ptr = IntPtr.Add(game.ReadPointer(ptr), offsets[i]);
+                }
+
+                vars.RAMAddress = ptr;
+            }
+            
         }
-        
-    }
-    else if (normalizedProcessName.Contains("desmume_0.9.13")) {
-        print("Detected DeSmuME v0.9.13, applying pointer path...");
-        vars.RAMAddress = IntPtr.Add(exe.BaseAddress, 0xA915400);
-    }
-    else if (normalizedProcessName.Contains("desmume_0.9.11")) {
-        print("Detected DeSmuME v0.9.11, applying pointer path...");
-        vars.RAMAddress = IntPtr.Add(exe.BaseAddress, 0x5411250);
-    }
+        else if (normalizedProcessName.Contains("desmume_0.9.13")) {
+            print("Detected DeSmuME v0.9.13, applying pointer path...");
+            vars.RAMAddress = IntPtr.Add(exe.BaseAddress, 0xA915400);
+        }
+        else if (normalizedProcessName.Contains("desmume_0.9.11")) {
+            print("Detected DeSmuME v0.9.11, applying pointer path...");
+            vars.RAMAddress = IntPtr.Add(exe.BaseAddress, 0x5411250);
+        }
+        else if (normalizedProcessName.Contains("desmume_0.9.11")) {
+            print("Detected DeSmuME v0.9.11, applying pointer path...");
+            vars.RAMAddress = IntPtr.Add(exe.BaseAddress, 0x5411250);
+        }
 
-    if (vars.RAMAddress == IntPtr.Zero) {
-        print("Could not find RAM Address!");
-        throw new Exception("[PMD EoS Autosplitter] Could not find RAM address");
+        if (vars.RAMAddress == IntPtr.Zero) {
+            print("Could not find RAM Address!");
+            throw new Exception("[PMD EoS Autosplitter] Could not find RAM address");
+        }
+
+        print("RAM Address found at " + vars.RAMAddress.ToString("X") + ".");
+
+        vars.versionDetection = new MemoryWatcher<byte>(new DeepPointer(IntPtr.Add(vars.RAMAddress, 0x0E)));
+        vars.versionDetection.Update(game);
+        vars.currentVersion = 0x00;
+
+        vars.detectGameVersion();
     }
-
-    print("RAM Address found at " + vars.RAMAddress.ToString("X") + ".");
-
-    vars.versionDetection = new MemoryWatcher<byte>(new DeepPointer(IntPtr.Add(vars.RAMAddress, 0x0E)));
-    vars.versionDetection.Update(game);
-    vars.currentVersion = 0x00;
-
-    vars.detectGameVersion();
 }
 
 split
@@ -815,31 +921,57 @@ reset
 
 update
 {
-    // TODO: rename these wild naming conventions
-    vars.PLAY_TIME_SECONDS.Update(game);
-    vars.PLAY_TIME_FRAME_COUNTER.Update(game);
-    vars.SCENARIO_MAIN_FLAG_MAIN.Update(game);
-    vars.SCENARIO_MAIN_FLAG_SUB.Update(game);
-    vars.REQUEST_CLEAR_COUNT.Update(game);
-    vars.brightness.Update(game);
-    vars.magic_number.Update(game);
-    vars.overlay1_start.Update(game);
-    vars.dungeon_ptr.Update(game);
-    vars.current_script_id.Update(game);
-    vars.versionDetection.Update(game);
-
-    if (vars.dungeon_ptr.Current != 0x00000000) {
-        int relative_dungeon_ptr = vars.dungeon_ptr.Current - 0x2000000;
-        IntPtr current_dungeon_id_addr = IntPtr.Add(vars.RAMAddress, relative_dungeon_ptr + 0x748);
-        IntPtr current_floor_addr = IntPtr.Add(vars.RAMAddress, relative_dungeon_ptr + 0x749);
-        IntPtr is_clearing_floor_addr = IntPtr.Add(vars.RAMAddress, relative_dungeon_ptr + 0x6);
-        vars.is_clearing_floor = game.ReadValue<bool>(is_clearing_floor_addr);
-        vars.current_dungeon_id = game.ReadValue<byte>(current_dungeon_id_addr);
-        vars.current_floor_old = vars.current_floor;
-        vars.current_floor = game.ReadValue<byte>(current_floor_addr);
+    if (vars.isHardwareUplink) {
+        vars.updateUplinkVariables();
+    }
+    else {
+        // TODO: rename these wild naming conventions
+        vars.PLAY_TIME_SECONDS.Update(game);
+        vars.PLAY_TIME_FRAME_COUNTER.Update(game);
+        vars.SCENARIO_MAIN_FLAG_MAIN.Update(game);
+        vars.SCENARIO_MAIN_FLAG_SUB.Update(game);
+        vars.REQUEST_CLEAR_COUNT.Update(game);
+        vars.brightness.Update(game);
+        vars.magic_number.Update(game);
+        vars.overlay1_start.Update(game);
+        vars.dungeon_ptr.Update(game);
+        vars.current_script_id.Update(game);
+        vars.versionDetection.Update(game);
     }
 
-    if (vars.currentVersion != vars.versionDetection.Current) {
+
+    if (vars.dungeon_ptr.Current != 0x00000000) {
+        if (vars.isHardwareUplink) {
+            byte[] frame = vars.uplinkLastFrame;
+            if (frame != null) {
+                vars.is_clearing_floor  = frame[0x36] != 0;
+                vars.current_dungeon_id = frame[0x3A];
+                vars.current_floor_old  = vars.current_floor;
+                vars.current_floor      = frame[0x3E];
+            }
+
+            //IntPtr is_clearing_floor_addr = IntPtr.Add(vars.MagicMarkerAddr, 0x3E);
+            //IntPtr current_dungeon_id_addr = IntPtr.Add(vars.MagicMarkerAddr, 0x3A);
+            //IntPtr current_floor_addr = IntPtr.Add(vars.MagicMarkerAddr, 0x42);
+            //vars.is_clearing_floor = game.ReadValue<bool>(is_clearing_floor_addr);
+            //vars.current_dungeon_id = game.ReadValue<byte>(current_dungeon_id_addr);
+            //vars.current_floor_old = vars.current_floor;
+            //vars.current_floor = game.ReadValue<byte>(current_floor_addr);
+        }
+        else {
+            int relative_dungeon_ptr = vars.dungeon_ptr.Current - 0x2000000;
+            IntPtr current_dungeon_id_addr = IntPtr.Add(vars.RAMAddress, relative_dungeon_ptr + 0x748);
+            IntPtr current_floor_addr = IntPtr.Add(vars.RAMAddress, relative_dungeon_ptr + 0x749);
+            IntPtr is_clearing_floor_addr = IntPtr.Add(vars.RAMAddress, relative_dungeon_ptr + 0x6);
+            vars.is_clearing_floor = game.ReadValue<bool>(is_clearing_floor_addr);
+            vars.current_dungeon_id = game.ReadValue<byte>(current_dungeon_id_addr);
+            vars.current_floor_old = vars.current_floor;
+            vars.current_floor = game.ReadValue<byte>(current_floor_addr);
+        }
+
+    }
+
+    if (!vars.isHardwareUplink && vars.currentVersion != vars.versionDetection.Current) {
         print("[PMD EoS Autosplitter] Game version changed. Re-running the version detection.");
         try {
             vars.detectGameVersion();
