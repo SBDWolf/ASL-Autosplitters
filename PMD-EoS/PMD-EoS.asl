@@ -760,138 +760,137 @@ split
     // We Enjoy Typing!
     
     // not every post-job-day sequence updates SCENARIO_MAIN_FLAGs, so we're delaying the split until the next script is loaded in order to normalize split timing
-    if (vars.current_script_id.Current == 0x3130323041303043) { // C00A0201
-        // jobs day 1, 0x3130323041303043 = C00A0201
-        if (vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 5 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 0) {
-            if (settings["jd01"] && vars.completedSplits.Add("jd01")) {
-                return true;
-            }
+        
+    // jobs day 1, 0x3130323041303043 = C00A0201
+    if (vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 5 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 0) {
+        if (settings["jd01"] && vars.completedSplits.Add("jd01")) {
+            return true;
         }
-        // sentry duty 1, 0x3130363041303043 = C00A0601, 0x313033304134304D = M04A0301
-        if ((vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 5 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 5) || (vars.current_script_id.Current == 0x313033304134304D) || (vars.current_script_id.Current == 0x3130363041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 5 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 3)) {           
-            if (settings["sd01"] && vars.completedSplits.Add("sd01")) {
-                return true;
-            }
+    }
+    // sentry duty 1, 0x3130363041303043 = C00A0601, 0x313033304134304D = M04A0301
+    if ((vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 5 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 5) || (vars.current_script_id.Current == 0x313033304134304D) || (vars.current_script_id.Current == 0x3130363041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 5 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 3)) {           
+        if (settings["sd01"] && vars.completedSplits.Add("sd01")) {
+            return true;
         }
-        // jobs day 2 
-        else if (vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 6 ) {
-            if (settings["jd02"] && vars.completedSplits.Add("jd02")) {
-                return true;
-            }
+    }
+    // jobs day 2 
+    else if (vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 6 ) {
+        if (settings["jd02"] && vars.completedSplits.Add("jd02")) {
+            return true;
         }
-        // jobs day 3 
-        else if (vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 7 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 3 && vars.REQUEST_CLEAR_COUNT.Current >= 1 ) { // no SCENARIO_MAIN_FLAG changes occur here, instead it looks up REQUEST_CLEAR_COUNT and sets SCENARIO_MAIN_BIT_FLAG[10] if it's high enough.
-            if (settings["jd03"] && vars.completedSplits.Add("jd03")) {
-                return true;
-            }
+    }
+    // jobs day 3 
+    else if (vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 7 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 3 && vars.REQUEST_CLEAR_COUNT.Current >= 1 ) { // no SCENARIO_MAIN_FLAG changes occur here, instead it looks up REQUEST_CLEAR_COUNT and sets SCENARIO_MAIN_BIT_FLAG[10] if it's high enough.
+        if (settings["jd03"] && vars.completedSplits.Add("jd03")) {
+            return true;
         }
-        // sentry duty 2
-        else if (vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 7 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 5) {
-            if (settings["sd02"] && vars.completedSplits.Add("sd02")) {
-                return true;
-            }
+    }
+    // sentry duty 2
+    else if (vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 7 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 5) {
+        if (settings["sd02"] && vars.completedSplits.Add("sd02")) {
+            return true;
         }
-        // jobs day 4, 0x313031304137304D = M07A0101
-        else if ((vars.current_script_id.Current == 0x3130323041303043 || vars.current_script_id.Current == 0x313031304137304D) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 8 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 0 ) {
-            if (settings["jd04"] && vars.completedSplits.Add("jd04")) {
-                return true;
-            }
+    }
+    // jobs day 4, 0x313031304137304D = M07A0101
+    else if ((vars.current_script_id.Current == 0x3130323041303043 || vars.current_script_id.Current == 0x313031304137304D) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 8 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 0 ) {
+        if (settings["jd04"] && vars.completedSplits.Add("jd04")) {
+            return true;
         }
-        // jobs day 5
-        else if ((vars.current_script_id.Current == 0x3130323041303043 || vars.current_script_id.Current == 0x3130363041303043) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 8 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 7 ) {
-            if (settings["jd05"] && vars.completedSplits.Add("jd05")) {
-                return true;
-            }
+    }
+    // jobs day 5
+    else if ((vars.current_script_id.Current == 0x3130323041303043 || vars.current_script_id.Current == 0x3130363041303043) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 8 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 7 ) {
+        if (settings["jd05"] && vars.completedSplits.Add("jd05")) {
+            return true;
         }
-        // sentry duty 3
-        else if ((vars.current_script_id.Current == 0x3130323041303043 || vars.current_script_id.Current == 0x3130363041303043) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 8 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 8) {
-            if (settings["sd03"] && vars.completedSplits.Add("sd03")) {
-                return true;
-            }
+    }
+    // sentry duty 3
+    else if ((vars.current_script_id.Current == 0x3130323041303043 || vars.current_script_id.Current == 0x3130363041303043) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 8 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 8) {
+        if (settings["sd03"] && vars.completedSplits.Add("sd03")) {
+            return true;
         }
-        // jobs day 6, 0x313031304138304D = M08A0101
-        else if ((vars.current_script_id.Current == 0x3130323041303043 || vars.current_script_id.Current == 0x313031304138304D) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 9 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 0 ) {
-            if (settings["jd06"] && vars.completedSplits.Add("jd06")) {
-                return true;
-            }
+    }
+    // jobs day 6, 0x313031304138304D = M08A0101
+    else if ((vars.current_script_id.Current == 0x3130323041303043 || vars.current_script_id.Current == 0x313031304138304D) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 9 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 0 ) {
+        if (settings["jd06"] && vars.completedSplits.Add("jd06")) {
+            return true;
         }
-        // jobs day 7
-        else if ((vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 12 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 2) || (vars.current_script_id.Current == 0x3130363041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 12 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 1)) {
-            if (settings["jd07"] && vars.completedSplits.Add("jd07")) {
-                return true;
-            }
+    }
+    // jobs day 7
+    else if ((vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 12 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 2) || (vars.current_script_id.Current == 0x3130363041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 12 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 1)) {
+        if (settings["jd07"] && vars.completedSplits.Add("jd07")) {
+            return true;
         }
-        // jobs day 8, 0x313036304131314D = M11A0601
-        else if ((vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 13 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 0) || vars.current_script_id.Current == 0x313036304131314D) {
-            if (settings["jd08"] && vars.completedSplits.Add("jd08")) {
-                return true;
-            }
+    }
+    // jobs day 8, 0x313036304131314D = M11A0601
+    else if ((vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 13 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 0) || vars.current_script_id.Current == 0x313036304131314D) {
+        if (settings["jd08"] && vars.completedSplits.Add("jd08")) {
+            return true;
         }
-        // jobs day 9
-        else if ((vars.current_script_id.Current == 0x3130363041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 17 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 1) || (vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 17 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 2)) {
-            if (settings["jd09"] && vars.completedSplits.Add("jd09")) {
-                return true;
-            }
+    }
+    // jobs day 9
+    else if ((vars.current_script_id.Current == 0x3130363041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 17 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 1) || (vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 17 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 2)) {
+        if (settings["jd09"] && vars.completedSplits.Add("jd09")) {
+            return true;
         }
-        // jobs day 10
-        else if ((vars.current_script_id.Current == 0x3130363041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 17 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 3) || (vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 17 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 4)) {
-            if (settings["jd10"] && vars.completedSplits.Add("jd10")) {
-                return true;
-            }
+    }
+    // jobs day 10
+    else if ((vars.current_script_id.Current == 0x3130363041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 17 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 3) || (vars.current_script_id.Current == 0x3130323041303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 17 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 4)) {
+        if (settings["jd10"] && vars.completedSplits.Add("jd10")) {
+            return true;
         }
-        // jobs day 11, 0x313036304131314D = C00A1001, 0x3130313141303043 = C00A1101
-        else if ((vars.current_script_id.Current == 0x3130303141303043 || vars.current_script_id.Current == 0x3130313141303043) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 6) {
-            if (settings["jd11"] && vars.completedSplits.Add("jd11")) {
-                return true;
-            }
+    }
+    // jobs day 11, 0x313036304131314D = C00A1001, 0x3130313141303043 = C00A1101
+    else if ((vars.current_script_id.Current == 0x3130303141303043 || vars.current_script_id.Current == 0x3130313141303043) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 6) {
+        if (settings["jd11"] && vars.completedSplits.Add("jd11")) {
+            return true;
         }
-        // jobs day 12
-        else if ((vars.current_script_id.Current == 0x3130303141303043 || vars.current_script_id.Current == 0x3130313141303043) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 7) {
-            if (settings["jd12"] && vars.completedSplits.Add("jd12")) {
-                return true;
-            }
+    }
+    // jobs day 12
+    else if ((vars.current_script_id.Current == 0x3130303141303043 || vars.current_script_id.Current == 0x3130313141303043) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 7) {
+        if (settings["jd12"] && vars.completedSplits.Add("jd12")) {
+            return true;
         }
-        // jobs day 13
-        else if ((vars.current_script_id.Current == 0x3130303141303043 || vars.current_script_id.Current == 0x3130313141303043) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 33) {
-            if (settings["jd13"] && vars.completedSplits.Add("jd13")) {
-                return true;
-            }
+    }
+    // jobs day 13
+    else if ((vars.current_script_id.Current == 0x3130303141303043 || vars.current_script_id.Current == 0x3130313141303043) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 33) {
+        if (settings["jd13"] && vars.completedSplits.Add("jd13")) {
+            return true;
         }
-        // jobs day 14
-        else if ((vars.current_script_id.Current == 0x3130303141303043 || vars.current_script_id.Current == 0x3130313141303043) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 40) {
-            if (settings["jd14"] && vars.completedSplits.Add("jd14")) {
-                return true;
-            }
+    }
+    // jobs day 14
+    else if ((vars.current_script_id.Current == 0x3130303141303043 || vars.current_script_id.Current == 0x3130313141303043) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 40) {
+        if (settings["jd14"] && vars.completedSplits.Add("jd14")) {
+            return true;
         }
-        // jobs day 15
-        else if ((vars.current_script_id.Current == 0x3130303141303043 || vars.current_script_id.Current == 0x3130313141303043) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 53) {
-            if (settings["jd15"] && vars.completedSplits.Add("jd15")) {
-                return true;
-            }
+    }
+    // jobs day 15
+    else if ((vars.current_script_id.Current == 0x3130303141303043 || vars.current_script_id.Current == 0x3130313141303043) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 53) {
+        if (settings["jd15"] && vars.completedSplits.Add("jd15")) {
+            return true;
         }
-        // jobs day 16
-        else if ((vars.current_script_id.Current == 0x3130303141303043 || vars.current_script_id.Current == 0x3130313141303043) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 54) {
-            if (settings["jd16"] && vars.completedSplits.Add("jd16")) {
-                return true;
-            }
+    }
+    // jobs day 16
+    else if ((vars.current_script_id.Current == 0x3130303141303043 || vars.current_script_id.Current == 0x3130313141303043) && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 54) {
+        if (settings["jd16"] && vars.completedSplits.Add("jd16")) {
+            return true;
         }
-        // jobs day 17, = 0x3730313050303253 = S20P0107
-        else if ((vars.current_script_id.Current == 0x3130303141303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 68) || (vars.current_script_id.Current == 0x3730313050303253 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 69)) {
-            if (settings["jd17"] && vars.completedSplits.Add("jd17")) {
-                return true;
-            }
+    }
+    // jobs day 17, = 0x3730313050303253 = S20P0107
+    else if ((vars.current_script_id.Current == 0x3130303141303043 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 68) || (vars.current_script_id.Current == 0x3730313050303253 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 69)) {
+        if (settings["jd17"] && vars.completedSplits.Add("jd17")) {
+            return true;
         }
-        // jobs day 18, = 0x3130323050303253 = S20P0201, 0x3430323050303253 = S20P0204
-        else if ((vars.current_script_id.Current == 0x3130323050303253 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 70) || (vars.current_script_id.Current == 0x3430323050303253 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 70)) {
-            if (settings["jd18"] && vars.completedSplits.Add("jd18")) {
-                return true;
-            }
+    }
+    // jobs day 18, = 0x3130323050303253 = S20P0201, 0x3430323050303253 = S20P0204
+    else if ((vars.current_script_id.Current == 0x3130323050303253 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 70) || (vars.current_script_id.Current == 0x3430323050303253 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 70)) {
+        if (settings["jd18"] && vars.completedSplits.Add("jd18")) {
+            return true;
         }
-        // jobs day 19, = 0x3130333050303253 = S20P0301, 0x3530333050303253 = S20P0305
-        else if ((vars.current_script_id.Current == 0x3130333050303253 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 71) || (vars.current_script_id.Current == 0x3530333050303253 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 71)) {
-            if (settings["jd19"] && vars.completedSplits.Add("jd19")) {
-                return true;
-            }
+    }
+    // jobs day 19, = 0x3130333050303253 = S20P0301, 0x3530333050303253 = S20P0305
+    else if ((vars.current_script_id.Current == 0x3130333050303253 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 71) || (vars.current_script_id.Current == 0x3530333050303253 && vars.SCENARIO_MAIN_FLAG_MAIN.Current == 29 && vars.SCENARIO_MAIN_FLAG_SUB.Current == 71)) {
+        if (settings["jd19"] && vars.completedSplits.Add("jd19")) {
+            return true;
         }
     }
 }
