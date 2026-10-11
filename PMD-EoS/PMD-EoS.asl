@@ -1,5 +1,5 @@
 // Author: SBDWolf
-// v1.1
+// v1.1.1
 
 state("DeSmuME_0.9.11_x64")
 {
@@ -407,7 +407,7 @@ startup
     settings.Add("jd08", true, "Jobs Day 8 (0 Missions)");
     settings.Add(vars.DUNGEON_AMP_PLAINS.ToString(), true, "Amp Plains");
     settings.Add(vars.DUNGEON_FAR_AMP_PLAINS.ToString(), true, "Far Amp Plains");
-    settings.Add(vars.DUNGEON_AMP_CLEARING.ToString(), true, "Manectric & Electikes");
+    settings.Add(vars.DUNGEON_AMP_CLEARING.ToString(), true, "Manectric & Electrikes");
     settings.Add(vars.DUNGEON_NORTHERN_DESERT.ToString(), true, "Northern Desert");
     settings.Add(vars.DUNGEON_QUICKSAND_CAVE.ToString(), true, "Quicksand Cave");
     settings.Add(vars.DUNGEON_QUICKSAND_PIT.ToString(), true, "Quicksand Pit");
